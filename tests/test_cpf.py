@@ -55,3 +55,21 @@ class TestCpf(unittest.TestCase):
         ]
         for cpf, is_valid in cases:
             self.assertEqual(self.cpf.validate(cpf), is_valid)
+
+    def test_format(self):
+        cpf = self.cpf.generate()
+        
+        W = cpf[:3]
+        X = cpf[3:6]
+        Y = cpf[6:9]
+        Z = cpf[9:11]
+
+        self.assertTrue(self.cpf.check_formatting(f'{W}.{X}.{Y}-{Z}'))
+        self.assertTrue(self.cpf.check_formatting(f'{W}{X}{Y}{Z}'))
+
+        self.assertFalse(self.cpf.check_formatting(f'{W}.{X}.{Y}.{Z}'))
+        self.assertFalse(self.cpf.check_formatting(f'{W}.{X} {Y}-{Z}'))
+        self.assertFalse(self.cpf.check_formatting(f'{W}#{X}#{Y}-{Z}'))
+        self.assertFalse(self.cpf.check_formatting(f' {W}.{X}.{Y}-{Z}'))
+        self.assertFalse(self.cpf.check_formatting(f'{W}{X}{Y}-{Z}'))
+        self.assertFalse(self.cpf.check_formatting(f'{W}.{X}.{Y}{Z}'))

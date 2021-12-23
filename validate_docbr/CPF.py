@@ -6,13 +6,24 @@ from random import sample
 class CPF(BaseDoc):
     """Classe referente ao Cadastro de Pessoas Físicas (CPF)."""
 
-    def __init__(self, repeated_digits: bool = False):
+    def __init__(self, repeated_digits: bool = False, custom_regex_pattern=None):
+        super().__init__(custom_regex_pattern or
+            r"""
+            [0-9]{3} # Três primeiros dígitos numéricos
+            [\.]     # Um ponto (é necessário usar "\." pois "." é um caracter especial)
+            [0-9]{3}
+            [\.]
+            [0-9]{3}
+            [-]      # Um traço
+            [0-9]{2}
+            """
+        )
         self.digits = list(range(10))
         self.repeated_digits = repeated_digits
 
     def validate(self, doc: str = '') -> bool:
         """Validar CPF."""
-        if not self._validate_input(doc, ['.', '-']):
+        if not self.check_formatting(doc):
             return False
 
         doc = list(self._only_digits(doc))
@@ -40,7 +51,14 @@ class CPF(BaseDoc):
         return self.mask(cpf) if mask else cpf
 
     def mask(self, doc: str = '') -> str:
-        """Coloca a máscara de CPF na variável doc."""
+        """Coloca a máscara de CPF na variável doc.
+
+        Args:
+            doc (str, optional): [ATENÇÃO] O cpf deve conter somente números.
+
+        Returns:
+            str: Cpf formatado com máscara
+        """
         return "{}.{}.{}-{}".format(doc[:3], doc[3:6], doc[6:9], doc[-2:])
 
     def _generate_first_digit(self, doc: list) -> str:
