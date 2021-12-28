@@ -6,18 +6,25 @@ from random import sample
 class CPF(BaseDoc):
     """Classe referente ao Cadastro de Pessoas Físicas (CPF)."""
 
-    def __init__(self, repeated_digits: bool = False, custom_regex_pattern=None):
-        super().__init__(custom_regex_pattern or
-            r"""
-            [0-9]{3} # Três primeiros dígitos numéricos
-            [\.]     # Um ponto (é necessário usar "\." pois "." é um caracter especial)
-            [0-9]{3}
-            [\.]
-            [0-9]{3}
-            [-]      # Um traço
-            [0-9]{2}
-            """
-        )
+    def __init__(self, repeated_digits: bool = False, custom_regex_pattern: str = None):
+        """
+        Na maioria das vezes, esse contrutor será usado sem parâmetros.
+        
+        Args:
+            repeated_digits (bool, optional): 
+                Usado para aceitar CPFs com números repetidos. Defaults to False.
+            
+            custom_regex_pattern (str, optional): 
+                Usado na função validate para garantir que o CPF digitado esteja
+                de acordo com a formatação correta, esse parâmetro deve ser um regex 
+                válido ou None. Defaults to None.
+        """
+
+        if custom_regex_pattern is not None:
+            super().__init__(custom_regex_pattern)
+        else:
+            super().__init__(r"[0-9]{3}[\.][0-9]{3}[\.][0-9]{3}[-][0-9]{2}")
+
         self.digits = list(range(10))
         self.repeated_digits = repeated_digits
 

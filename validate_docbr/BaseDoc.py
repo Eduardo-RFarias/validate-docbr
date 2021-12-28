@@ -5,21 +5,16 @@ import re
 
 class BaseDoc(ABC):
     """Classe base para todas as classes referentes a documentos."""
-    
-    def __init__(self, validator_regex:str=None):
+
+    def __init__(self, regex_pattern: str):
         """Construtor usado para compilar o Regex pattern.
 
         Args:
-            validator_regex (str): Um regex pattern, espaços em branco e texto depois de # são ignorados.
-            
-        See:
-            re.VERBOSE: https://docs.python.org/3/library/re.html#re.VERBOSE
+            regex_pattern (str): 
+                Um regex pattern que será usado para validar a entrada do método validate.
         """
-        
         super().__init__()
-        
-        if validator_regex != None:
-            self.regex = re.compile(validator_regex,re.VERBOSE)
+        self.regex = re.compile(regex_pattern)
 
     def validate(self, doc: str = '') -> bool:
         """Método para validar o documento desejado."""
@@ -74,19 +69,24 @@ class BaseDoc(ABC):
 
         return not (len(set_non_digit_characters.difference(set_valid_characters)) > 0)
 
-    def check_formatting(self, doc: str):
+    def check_formatting(self, doc: str) -> bool:
         """Confere se a formatação está correta, é necessário passar um regex válido para o construtor da classe BaseDoc.
 
         Args:
             doc (str): O número do documento para validar, numérico ou não.
 
         Returns:
-            Match[str]|None: Se é válido ou não
+            bool: Se é válido ou não
         """
+        try:
+            match = self.regex.fullmatch
+        except AttributeError as ex:
+            raise AttributeError('Regex pattern não foi passado ao construtor da classe, ' +
+                                 'certifique-se de usar "super().__init__(regex_pattern: str)"'+
+                                 'corretamente.\n' +
+                                 str(ex))
+
         if doc.isnumeric():
             return True
-        
-        if self.regex == None:
-            raise NotImplementedError('Este método requer que um regex seja passado para o contrutor de BaseDoc')
-        
-        return self.regex.fullmatch(doc) != None
+
+        return match(doc) is not None

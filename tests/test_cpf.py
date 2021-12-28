@@ -58,18 +58,18 @@ class TestCpf(unittest.TestCase):
 
     def test_format(self):
         cpf = self.cpf.generate()
-        
+
         W = cpf[:3]
         X = cpf[3:6]
         Y = cpf[6:9]
         Z = cpf[9:11]
 
-        self.assertTrue(self.cpf.check_formatting(f'{W}.{X}.{Y}-{Z}'))
-        self.assertTrue(self.cpf.check_formatting(f'{W}{X}{Y}{Z}'))
+        self.assertTrue(self.cpf.check_formatting('{}.{}.{}-{}'.format(W,X,Y,Z)))
+        self.assertTrue(self.cpf.check_formatting('{}{}{}{}'.format(W,X,Y,Z)))
 
-        self.assertFalse(self.cpf.check_formatting(f'{W}.{X}.{Y}.{Z}'))
-        self.assertFalse(self.cpf.check_formatting(f'{W}.{X} {Y}-{Z}'))
-        self.assertFalse(self.cpf.check_formatting(f'{W}#{X}#{Y}-{Z}'))
-        self.assertFalse(self.cpf.check_formatting(f' {W}.{X}.{Y}-{Z}'))
-        self.assertFalse(self.cpf.check_formatting(f'{W}{X}{Y}-{Z}'))
-        self.assertFalse(self.cpf.check_formatting(f'{W}.{X}.{Y}{Z}'))
+        self.assertFalse(self.cpf.check_formatting('{}.{}.{}.{}'.format(W,X,Y,Z)))
+        self.assertFalse(self.cpf.check_formatting('{}.{} {}-{}'.format(W,X,Y,Z)))
+        self.assertFalse(self.cpf.check_formatting('{}#{}#{}-{}'.format(W,X,Y,Z)))
+        self.assertFalse(self.cpf.check_formatting(' {}.{}.{}-{}'.format(W,X,Y,Z)))
+        self.assertFalse(self.cpf.check_formatting('{}{}{}-{}'.format(W,X,Y,Z)))
+        self.assertFalse(self.cpf.check_formatting('{}.{}.{}{}'.format(W,X,Y,Z)))
